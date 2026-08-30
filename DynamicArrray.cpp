@@ -8,6 +8,7 @@
 using namespace std;
 
 
+/*
 class Exception{
     string text;
 public:
@@ -17,6 +18,9 @@ public:
         return text;
     }
 };
+
+*/
+
 template <typename T>
 class DynamicArray {
 private:
@@ -40,7 +44,15 @@ public:
     
     }
     void setValues(){
-        for(int i=0; i<size; i++){
+        for(int i = 0; i < size; i++){
+            cout << "Enter value at index " << i << ": ";
+            
+            if(i == 0)  cin.ignore();  // Clear leftover newline from input buffer
+            
+            // Check at compile-time if the template type T is a std::string
+            if constexpr(std::is_same_v<T, std::string>) { 
+                getline(cin, arr[i]);  // Read entire line including spaces for strings
+            } else  cin >> arr[i];  
             
         }
     }
@@ -56,7 +68,17 @@ public:
 
     // Remove last element and decrease size and adjust capacity
     void popBack(){
-        //think logic
+        if(size == 0)  throw std::invalid_argument("Cannot pop from an empty array");
+        size--;  
+        
+        // For memory efficiency
+        if(size > 0 && size == capacity / 4) {
+            T *newArr = new T[capacity / 2];
+            for(int i = 0; i < size; i++)  newArr[i] = arr[i];
+            delete[] arr;
+            arr = newArr;
+            capacity = capacity / 2;
+        }
     }
 
     //Display Last Element
